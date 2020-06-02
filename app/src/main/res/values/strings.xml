@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">MoneyTraker</string>
 
-    <string name="hello">hello</string>
+    <string name="add_item_title">New post</string>
+    <string name="title">title</string>
+    <string name="money">0$</string>
+
+    <string name="activity_items_list_title">Budget accounting</string>
 </resources>

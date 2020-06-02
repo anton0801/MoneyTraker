@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">Учет денег</string>
+    
+    <string name="add_item_title">Новая запись</string>
+    <string name="title">Название</string>
+    <string name="money">0₽</string>
 
-    <string name="hello">Привет</string>
+    <string name="activity_items_list_title">Учет бюджета</string>
 </resources>
