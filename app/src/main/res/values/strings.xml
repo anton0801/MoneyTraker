@@ -6,4 +6,27 @@
     <string name="money">0$</string>
 
     <string name="activity_items_list_title">Budget accounting</string>
+
+    <string name="tab_incomes">Incomes</string>
+    <string name="tab_expenses">Expenses</string>
+    <string name="tab_balance">Balance</string>
+
+    <string name="current_valute">$</string>
+
+    <string name="remove">remove</string>
+    <string name="auth_label">Sign in</string>
+    <string name="auth_text">Ваш незаменимый помощник в управлении бюджетом</string>
+    <string name="enter_in_app_label">Вы удачно вошли</string>
+    <string name="some_went_wrong">Some went wrong! Tray again</string>
+    <string name="your_balance_label">Your balance</string>
+    <string name="expens_label">expense</string>
+    <string name="income_label">income</string>
+
+    <string name="price">$%s</string>
+
+    <string-array name="tab_title">
+        <item>@string/tab_incomes</item>
+        <item>@string/tab_expenses</item>
+        <item>@string/tab_balance</item>
+    </string-array>
 </resources>

@@ -3,28 +3,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/bg_pattern"
-    tools:context=".AddItemActivity">
-    
-    <LinearLayout
-        android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".activities.AddItemActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="8dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+    </androidx.appcompat.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:background="@color/white"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingLeft="22dp"
-        android:paddingRight="22dp"
-        android:gravity="center_vertical"
-        android:layout_height="68dp">
+        android:paddingRight="22dp">
 
         <EditText
             android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:background="@null"
             android:hint="@string/title"
-            android:layout_weight="1"
-            android:maxLines="1"
             android:inputType="text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:maxLines="1" />
 
         <EditText
             android:id="@+id/price"
@@ -39,30 +50,29 @@
             android:maxLines="1" />
 
         <Button
-            android:enabled="false"
             android:id="@+id/add_btn"
-            android:layout_marginLeft="22dp"
-            android:background="@drawable/ic_add"
             android:layout_width="26dp"
-            android:layout_height="26dp" />
+            android:layout_height="26dp"
+            android:layout_marginLeft="22dp"
+            android:background="@drawable/ic_add" />
 
     </LinearLayout>
 
 </LinearLayout>
 
-<!--
+    <!--
 
-    плотность экранов
-        mdpi:    1x     100dp -> 100px
-        hdpi:    1,5x   100dp -> 150px
-        xhdpi:   2x     100dp -> 200px
-        xxhdpi:  3x     100dp -> 300px
-        xxxhdpi: 4x     100dp -> 400px
+        плотность экранов
+            mdpi:    1x     100dp -> 100px
+            hdpi:    1,5x   100dp -> 150px
+            xhdpi:   2x     100dp -> 200px
+            xxhdpi:  3x     100dp -> 300px
+            xxxhdpi: 4x     100dp -> 400px
 
-        в дизайнер делает под mdpi
+            в дизайнер делает под mdpi
 
-    match_parent: он растягивает на весь экран
-    wrap_content: он элемент сужается по шерене
-    или можем через px указыва
+        match_parent: он растягивает на весь экран
+        wrap_content: он элемент сужается по шерене
+        или можем через px указыва
 
--->
+    -->
