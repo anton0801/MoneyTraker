@@ -2,6 +2,8 @@ package priler.com.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,10 +18,13 @@ import com.google.android.material.tabs.TabLayout;
 
 import priler.com.R;
 import priler.com.adapters.MainPagesAdapter;
+import priler.com.api.App;
 import priler.com.fragments.ItemsFragment;
 import priler.com.models.Item;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+
+    public static String userId;
 
     private ViewPager pager;
     private TabLayout tabLayout;
@@ -34,6 +39,14 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (!((App) getApplication()).getBoolean(App.IS_AUTH_KEY)) {
+            startActivity(new Intent(this, AuthActivity.class));
+            finish();
+            return;
+        }
+
+        MainActivity.userId = ((App) getApplication()).getString("user_id");
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -74,8 +87,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         switch (position) {
             case MainPagesAdapter.PAGE_INCOMES:
             case MainPagesAdapter.PAGE_EXPENSES:
-                    fab.show(); // у метода show() усть еще анимация показывания
-                    break;
+                fab.show(); // у метода show() усть еще анимация показывания
+                break;
             case MainPagesAdapter.PAGE_BALANCE:
                 fab.hide();
                 break;
@@ -85,14 +98,14 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     @Override
     public void onPageScrollStateChanged(int state) {
         /*
-        *   у state есть три разновидности state:
-        *       1. ViewPager.SCROLL_STATE_IDLE
-        *           это когда просто страница задана и все она стоит на месте
-        *       2. ViewPager.SCROLL_STATE_DRAGGING
-        *           это когда мы начинаем тянуть
-        *       3. ViewPager.SCROLL_STATE_SETTLING
-        *           это уже когда мы палец отпустили и страница уже сама доводится до положения нужного
-        * */
+         *   у state есть три разновидности state:
+         *       1. ViewPager.SCROLL_STATE_IDLE
+         *           это когда просто страница задана и все она стоит на месте
+         *       2. ViewPager.SCROLL_STATE_DRAGGING
+         *           это когда мы начинаем тянуть
+         *       3. ViewPager.SCROLL_STATE_SETTLING
+         *           это уже когда мы палец отпустили и страница уже сама доводится до положения нужного
+         * */
         switch (state) {
             case ViewPager.SCROLL_STATE_IDLE:
                 fab.setEnabled(true);
@@ -128,4 +141,19 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         actionMode = null;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.sign_out) {
+            ((App) getApplication()).putBoolean(App.IS_AUTH_KEY, false);
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }
+        return true;
+    }
 }

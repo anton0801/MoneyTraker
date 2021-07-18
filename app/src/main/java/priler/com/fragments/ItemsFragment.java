@@ -1,11 +1,9 @@
 package priler.com.fragments;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,9 +21,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import priler.com.R;
+import priler.com.activities.MainActivity;
 import priler.com.adapters.ItemsAdapter;
 import priler.com.api.Api;
 import priler.com.api.App;
@@ -67,7 +66,7 @@ public class ItemsFragment extends Fragment implements ItemsAdapterListener {
 
         Bundle bundle = getArguments();
         if (bundle != null)
-            type = bundle.getString(TYPE_KEY, Item.TYPE_EXPENSES);
+            type = bundle.getString(TYPE_KEY, Item.TYPE_INCOMES);
 
         if (type.equals(Item.TYPE_UNKNOWN))
             throw new IllegalArgumentException("Unknown type");
@@ -92,38 +91,36 @@ public class ItemsFragment extends Fragment implements ItemsAdapterListener {
         recyclerView = view.findViewById(R.id.list);
         recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager); // getActivity это и есть context или getContext()
+        recyclerView.setLayoutManager(layoutManager);
 
         refresh = view.findViewById(R.id.refresh);
         refresh.setColorSchemeColors(Color.BLUE, Color.CYAN, Color.GREEN);
         refresh.setOnRefreshListener(() -> {
-            loadItems(page);
+            loadItems();
             refresh.setRefreshing(false);
         });
 
-        loadItems(page);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            recyclerView.setOnScrollChangeListener((view1, i, i1, i2, i3) -> {
-//                if (layoutManager.findLastCompletelyVisibleItemPosition() == adapter.getItemCount() - 4) {
-//                    page++;
-//                    loadItems(page);
-//                }
-//            });
-//        }
+        loadItems();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            recyclerView.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                if (layoutManager.findLastCompletelyVisibleItemPosition() == adapter.getItemCount() - 4) {
+                    page++;
+                    loadItems();
+                }
+            });
+        }
     }
 
-    public void loadItems(int page) {
+    public void loadItems() {
         refresh.setRefreshing(true);
-        Call<ItemResponse> call = api.getItems(1, type, page);
-
-        call.enqueue(new Callback<ItemResponse>() {
+        api.getItems(Integer.parseInt(MainActivity.userId), type, page).enqueue(new Callback<ItemResponse>() {
             @Override
             public void onResponse(Call<ItemResponse> call, Response<ItemResponse> response) {
                 if (response.isSuccessful()) {
-                    List<Item> items = response.body().getResults();
-                    if (items != null) {
+                    if (response.body() != null) {
                         refresh.setRefreshing(false);
-                        adapter.setData(items);
+                        adapter.setData(response.body().getResults());
                     }
                 }
             }
@@ -131,38 +128,9 @@ public class ItemsFragment extends Fragment implements ItemsAdapterListener {
             @Override
             public void onFailure(Call<ItemResponse> call, Throwable t) {
                 refresh.setRefreshing(false);
-                Toast.makeText(getContext(), "Что-то пошло не так", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getString(R.string.some_went_wrong_internet), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-//    private void addItem(Item item) {
-//        api.addItem(1, item.name, item.price,
-//                item.comment, type).enqueue(new Callback<ItemResponse>() {
-//            @Override
-//            public void onResponse(Call<ItemResponse> call, Response<ItemResponse> response) {
-//                if (response.body() != null) {
-//                    item.id = response.body().getResults().get(0).id;
-//                    adapter.addItem(item);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ItemResponse> call, Throwable t) {
-//                Toast.makeText(getContext(), "Что-то пошло не так", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ADD_ITEM_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Item item = (Item) data.getSerializableExtra("item");
-            if (item != null && item.type.equals(type)) {
-                adapter.addItem(item);
-            }
-        }
     }
 
     /* start ActionMode */
@@ -191,18 +159,33 @@ public class ItemsFragment extends Fragment implements ItemsAdapterListener {
                             .setTitle("Удаление")
                             .setMessage("Вы увереный что хотите удалить?")
                             .setPositiveButton("Да", (dialog, v) -> {
-//                                refresh.setRefreshing(true);
-//                                SparseBooleanArray selections = adapter.getSelections();
-//                                for (int i = 0; i < selections.size(); i++) {
-//                                    api.delete(selections);
-//                                }
-//                                refresh.setRefreshing(false);
+                                refresh.setRefreshing(true);
+                                ArrayList<Item> selections = adapter.getSelections();
+                                boolean isSuccess = false;
+                                for (Item selection : selections) {
+                                    api.delete(selection.id).enqueue(new Callback<ItemResponse>() {
+                                        @Override
+                                        public void onResponse(Call<ItemResponse> call, Response<ItemResponse> response) {
+                                            if (response.isSuccessful() && response.code() != 404) {
+                                                ItemResponse itemResponse = response.body();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<ItemResponse> call, Throwable t) {
+
+                                        }
+                                    });
+                                }
+                                isSuccess = true;
+                                refresh.setRefreshing(false);
                             })
                             .setNegativeButton("Нет", null)
                             .setCancelable(false);
                     builder.show();
                     break;
             }
+            Toast.makeText(getContext(), "Вы удачно удалили зап.", Toast.LENGTH_SHORT).show();
             mode.finish();
             return true;
         }
@@ -220,10 +203,7 @@ public class ItemsFragment extends Fragment implements ItemsAdapterListener {
     public void onItemClick(Item item, int position) {
         if (isActionMode()) {
             toggleSelection(position);
-        } else {
-            toggleSelection(position);
         }
-        Log.d(TAG, "onItemClick: name = " + item.name + " position = " + position);
     }
 
     @Override
@@ -233,7 +213,6 @@ public class ItemsFragment extends Fragment implements ItemsAdapterListener {
         }
         actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(actionModeCallback);
         toggleSelection(position);
-        Log.d(TAG, "onItemLongClick: name = " + item.name + " position = " + position);
     }
 
     private boolean isActionMode() {

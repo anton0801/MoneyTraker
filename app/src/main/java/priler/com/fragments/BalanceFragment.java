@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import priler.com.DiagramView;
 import priler.com.R;
+import priler.com.activities.MainActivity;
 import priler.com.api.Api;
 import priler.com.api.App;
 import priler.com.models.BalanceResult;
@@ -68,7 +69,7 @@ public class BalanceFragment extends Fragment {
 
     private void updateData() {
         progressBar.setVisibility(View.VISIBLE);
-        api.getBalance(1)
+        api.getBalance(Integer.parseInt(MainActivity.userId))
                 .enqueue(new Callback<BalanceResult>() {
                     @Override
                     public void onResponse(Call<BalanceResult> call, Response<BalanceResult> response) {

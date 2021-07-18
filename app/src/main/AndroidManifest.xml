@@ -26,7 +26,6 @@
             android:name=".activities.AddItemActivity"
             android:label="@string/add_item_title"
             android:parentActivityName=".activities.MainActivity">
-
         </activity>
     </application>
 

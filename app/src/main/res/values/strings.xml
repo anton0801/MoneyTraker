@@ -18,11 +18,16 @@
     <string name="auth_text">Ваш незаменимый помощник в управлении бюджетом</string>
     <string name="enter_in_app_label">Вы удачно вошли</string>
     <string name="some_went_wrong">Some went wrong! Tray again</string>
+    <string name="some_went_wrong_internet">Some went wrong! Check your connection</string>
     <string name="your_balance_label">Your balance</string>
     <string name="expens_label">expense</string>
     <string name="income_label">income</string>
 
     <string name="price">$%s</string>
+
+    <string name="sign_out">Sign out</string>
+    <string name="create_post_success_text">You have successfully created a new post</string>
+    <string name="enter_all_dates_text">Enter all data in the fields</string>
 
     <string-array name="tab_title">
         <item>@string/tab_incomes</item>

@@ -34,7 +34,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
 
     public void setData(List<Item> data) {
         this.data = data;
-        notifyItemRangeInserted(this.data.size(), data.size());
+        // this.data.addAll(data);
+        notifyDataSetChanged();
+        // notifyItemRangeInserted(this.data.size(), data.size());
     }
 
     public void deleteItem(Item item) {
@@ -48,7 +50,12 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
         notifyItemInserted(data.size());
     }
 
+    public List<Item> getData() {
+        return data;
+    }
+
     private SparseBooleanArray selections = new SparseBooleanArray(); // это типо HashMap, но в android лучше использовать SparseBooleanArray
+    private ArrayList<Item> selectionsArray = new ArrayList<>();
 
     public void toggleSelection(int position) {
         if (selections.get(position, false)) {
@@ -82,30 +89,25 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
             title.setText(record.name);
             price.setText(context.getResources().getString(R.string.price, record.price));
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        listener.onItemClick(record, getAdapterPosition());
-                    }
+            itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onItemClick(record, getAdapterPosition());
                 }
             });
-            itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    if (listener != null) {
-                        listener.onItemLongClick(record, getAdapterPosition());
-                    }
-                    return true;
+            itemView.setOnLongClickListener(v -> {
+                if (listener != null) {
+                    listener.onItemLongClick(record, getAdapterPosition());
                 }
+                return true;
             });
+
             itemView.setActivated(selected);
         }
 
     }
 
-    public SparseBooleanArray getSelections() {
-        return selections;
+    public ArrayList<Item> getSelections() {
+        return selectionsArray;
     }
 
     @NonNull
@@ -119,6 +121,10 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
     @Override
     public void onBindViewHolder(ItemsAdapter.ItemViewHolder holder, int position) {
         Item record = data.get(position);
+
+        if (selections.get(position, false)) {
+            selectionsArray.add(record);
+        }
         holder.bindData(record, listener, selections.get(position, false));
     }
 

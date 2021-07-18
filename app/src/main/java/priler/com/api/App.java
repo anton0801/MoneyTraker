@@ -1,6 +1,7 @@
 package priler.com.api;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -18,8 +19,11 @@ public class App extends Application {
 
     private static final String TAG = "App";
 
-    public static final String BASE_URL = "https://c3f83173aa7a.ngrok.io/api/";
+    public static final String BASE_URL = "https://moneytracker-server.ru/api/";
     public static final String DATE_FORMAT = "dd:HH:mm";
+    public static final String PREFS_NAME = "money_tracker";
+    public static final String AUTH_TOKEN_KEY = "auth_token";
+    public static final String IS_AUTH_KEY = "is_auth";
 
     private Api api;
 
@@ -53,8 +57,36 @@ public class App extends Application {
         api = retrofit.create(Api.class);
     }
 
+    private static App instance;
+
     public Api getApi() {
         return api;
+    }
+
+    public void saveAuthToken(String token) {
+        SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+        editor.putString(AUTH_TOKEN_KEY, token);
+        editor.apply();
+    }
+
+    public void putString(String key, String value) {
+        SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
+
+    public String getString(String key) {
+        return getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getString(key, "");
+    }
+
+    public void putBoolean(String key, boolean value) {
+        SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+        editor.putBoolean(key, value);
+        editor.apply();
+    }
+
+    public boolean getBoolean(String key) {
+        return getSharedPreferences(PREFS_NAME, MODE_PRIVATE).getBoolean(key, false);
     }
 
 }
