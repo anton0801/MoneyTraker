@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MyButton">
+        <attr name="text" format="string" />
+        <attr name="myBackground" format="color" />
+        <attr name="textSize" format="integer" />
+        <attr name="textColor" format="color" />
+        <attr name="allCap" format="boolean" />
+    </declare-styleable>
+</resources>
